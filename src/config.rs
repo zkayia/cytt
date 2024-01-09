@@ -1,0 +1,166 @@
+
+use std::{
+  env::var,
+  fmt,
+  fs,
+  path::{Path, PathBuf},
+  process::exit
+};
+
+use once_cell::sync::Lazy;
+
+use crate::{CONFIG, elogln, logln};
+
+
+pub static DB_SEP: &str = ";";
+pub static CELCAT_HOST: &str = "https://services-web.cyu.fr";
+pub static PUBLIC_PATH: Lazy<PathBuf> = Lazy::new(|| Path::new(&CONFIG.data_path).join("public"));
+
+
+#[derive(Clone, Debug)]
+pub struct Group {
+  pub name: String,
+  pub student_id: String,
+  pub gcal_id: Option<String>,
+  pub gcal_id_cm: Option<String>,
+  pub gcal_id_td: Option<String>,
+  pub gcal_id_examen: Option<String>,
+  pub gcal_id_autre: Option<String>,
+}
+
+impl fmt::Display for Group {
+  fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+    
+    writeln!(formatter, "Group(")?;
+    writeln!(formatter, "      name: {}", self.name)?;
+    writeln!(formatter, "      student_id: {}", self.student_id)?;
+    writeln!(formatter, "      gcal_id: {:?}", self.gcal_id)?;
+    writeln!(formatter, "      gcal_id_cm: {:?}", self.gcal_id_cm)?;
+    writeln!(formatter, "      gcal_id_td: {:?}", self.gcal_id_td)?;
+    writeln!(formatter, "      gcal_id_examen: {:?}", self.gcal_id_examen)?;
+    writeln!(formatter, "      gcal_id_autre: {:?}", self.gcal_id_autre)?;
+    write!(formatter, "    )")?;
+    
+    return Ok(());
+  }
+}
+
+#[derive(Clone, Debug)]
+pub struct Config {
+  pub celcat_username: String,
+  pub celcat_password: String,
+  pub groups: Vec<Group>,
+  pub host: String,
+  pub port: String,
+  pub data_path: String,
+  pub calendar_fetch_interval: u64,
+  pub calendar_fetch_range: u8,
+}
+
+impl fmt::Display for Config {
+  fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+
+    writeln!(formatter, "Config(")?;
+    writeln!(formatter, "  celcat_username: {},", self.celcat_username)?;
+    writeln!(formatter, "  celcat_password: {},", self.celcat_password)?;
+    writeln!(formatter, "  groups: [")?;
+    for group in &self.groups {
+      writeln!(formatter, "    {},", group)?;
+    }
+    writeln!(formatter, "  ],")?;
+    writeln!(formatter, "  host: {},", self.host)?;
+    writeln!(formatter, "  port: {},", self.port)?;
+    writeln!(formatter, "  data_path: {},", self.data_path)?;
+    writeln!(formatter, "  calendar_fetch_interval: {},", self.calendar_fetch_interval)?;
+    writeln!(formatter, "  calendar_fetch_range: {},", self.calendar_fetch_range)?;
+    writeln!(formatter, ")")?;
+    
+    return Ok(());
+  }
+}
+
+impl Config {
+
+  pub fn load() -> Config {
+
+    logln!();
+    logln!("Loading config...");
+
+    let mut groups: Vec<Group> = vec![];
+    let mut n: u8 = 0;
+    while var(format!("CYTT_GROUP_{n}_NAME")).is_ok() {
+      groups.push(
+        Group{
+          name: match var(format!("CYTT_GROUP_{n}_NAME")) {
+            Ok(value) => match value.chars().all(
+              |e| match e {'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_' => true, _ => false}
+            ) {
+              true => value,
+              false => {
+                elogln!("`group_{n}_name` does not match `[A-Za-z0-9-_]`, skipping this group.");
+                n += 1;
+                continue;
+              }
+            },
+            Err(_) => {
+              elogln!("Something went wrong while loading `group_{n}_name`, skipping this group.");
+              n += 1;
+              continue;
+            }
+          },
+          student_id: match var(format!("CYTT_GROUP_{n}_STUDENTID")) {
+            Ok(value) => value,
+            Err(_) => {
+              elogln!("Something went wrong while loading `group_{n}_studentid`, skipping this group.");
+              n += 1;
+              continue;
+            } 
+          },
+          gcal_id: var(format!("CYTT_GROUP_{n}_GCALID")).ok(),
+          gcal_id_cm: var(format!("CYTT_GROUP_{n}_GCALID_CM")).ok(),
+          gcal_id_td: var(format!("CYTT_GROUP_{n}_GCALID_TD")).ok(),
+          gcal_id_examen: var(format!("CYTT_GROUP_{n}_GCALID_EXAMEN")).ok(),
+          gcal_id_autre: var(format!("CYTT_GROUP_{n}_GCALID_AUTRE")).ok(),
+        }
+      );
+      n += 1;
+    }
+
+    let config = Config{
+      celcat_username: match var("CYTT_CELCAT_USERNAME") {
+        Ok(value) => value,
+        Err(_) => {
+          elogln!("Failed to load config: `celcat_username` is missing or invalid.");
+          exit(1);
+        }
+      },
+      celcat_password: match var("CYTT_CELCAT_PASSWORD") {
+        Ok(value) => value,
+        Err(_) => {
+          elogln!("Failed to load config: `celcat_password` is missing or invalid.");
+          exit(1);
+        }
+      },
+      groups,
+      host: var("CYTT_HOST").unwrap_or("127.0.0.1".to_owned()),
+      port: var("CYTT_PORT").unwrap_or("8000".to_owned()),
+      data_path: var("CYTT_DATA_PATH").unwrap_or("./data".to_owned()),
+      calendar_fetch_interval: match var("CYTT_CALENDAR_FETCH_INTERVAL") {
+        Ok(value) => value.parse::<u64>().unwrap_or(60 * 30),
+        Err(_) => 60 * 30
+      },
+      calendar_fetch_range: match var("CYTT_CALENDAR_FETCH_RANGE") {
+        Ok(value) => value.parse::<u8>().unwrap_or(10),
+        Err(_) => 10
+      },
+    };
+
+    if let Err(err) = fs::create_dir_all(Path::new(&config.data_path).join("public")) {
+      logln!("Failed to create/access data and public dirs:\n{err}");
+    }
+
+    logln!("Config loaded: {config}");
+    
+    return config;
+  }
+}

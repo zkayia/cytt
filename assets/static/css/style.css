@@ -1,0 +1,113 @@
+
+
+:root {
+  --primary: #479a2a;
+  /* --icon-chevron-button */
+  --border-radius: 0.5rem;
+  --block-padding: 1rem 0;
+  --logo-size: 40px;
+  --icon-size: 30px;
+  --flex-margin: 1rem;
+}
+
+html {
+  overflow-x: visible;
+}
+
+body {
+  overflow-x: visible;
+
+  > :is(header, main, footer) {
+    padding: var(--block-padding);
+  }
+  
+  > header {
+    display: flex;
+    gap: var(--flex-margin);
+
+    > img {
+      margin: auto 0;
+      height: var(--logo-size);
+      width: var(--logo-size);
+    }
+  }
+
+  > main {
+
+    img {
+      border-radius: var(--border-radius);
+    }
+    
+    table td:last-of-type {
+      display: flex;
+      gap: var(--flex-margin);
+      justify-content: end;
+      
+      :is(button, [role="button"]) {
+        margin: 0;
+        width: fit-content;
+      }
+    }
+  }
+  
+  > footer {
+    display: flex;
+    justify-content: center;
+    gap: var(--flex-margin);
+
+    > a {
+      text-decoration: none;
+
+      &:has(i) {
+        display: flex;
+  
+        i {
+          margin: auto 0;
+        }
+      }
+    }
+  }
+}
+
+/* GENERICS */
+
+button, [role="button"] {
+
+  &:is(.success, .ok) {
+    color: var(--form-element-valid-border-color);
+    border-color: var(--form-element-valid-border-color);
+
+    &:is(:active, :focus) {
+      --border-color: var(--form-element-valid-active-border-color) !important;
+      --box-shadow: 0 0 0 var(--outline-width) var(--form-element-valid-focus-color) !important
+    }
+  }
+
+  &:is(.error, .danger) {
+    color: var(--form-element-invalid-border-color);
+    border-color: var(--form-element-invalid-border-color);
+
+    &:is(:active, :focus) {
+      --border-color :var(--form-element-invalid-active-border-color) !important;
+      --box-shadow: 0 0 0 var(--outline-width) var(--form-element-invalid-focus-color) !important
+    }
+  }
+}
+
+.avatar {
+  border-radius: var(--border-radius);
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+i.bx {
+  font-size: var(--icon-size);
+  vertical-align: top;
+}
+
+@media (min-width:768px) {
+  i.bx {
+    font-size: var(--icon-size);
+    vertical-align: text-top;
+  }
+}

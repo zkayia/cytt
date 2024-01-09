@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/boxicons.min.css">
+  <link rel="stylesheet" href="css/pico.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js"></script>
+  
+  <title>CY TimeTable</title>
+</head>
+
+<body class="container">
+
+  <header>
+    <img src="img/logocytt.png" alt="Logo: cytt" width="40" height="40">
+    
+    <nav aria-label="breadcrumb">
+      <ul>
+        <li><a href="/">cytt</a></li>
+        {%- if crate::CONFIG.groups.len() != 0 %}
+        <li>{{crate::CONFIG.groups[0].name}}</li>
+        {%- else %}
+        <li></li>
+        {%- endif %}
+      </ul>
+    </nav>
+  </header>
+  
+  <main>
+    
+    <select>
+      {%- for group in crate::CONFIG.groups %}
+      <option value="{{group.name}}" {%- if loop.first %} selected {% endif %}>{{group.name}}</option>
+      {%- endfor %}
+    </select>
+
+    {%- for group in crate::CONFIG.groups %}
+    <div data-group="{{group.name}}">
+      <a href="{{group.name}}.png">
+        <img src="{{group.name}}.png" alt="Emploi du temps: {{group.name}}" loading="lazy" width="1920" height="1080">
+      </a>
+
+      <br><br>
+
+      <table role="grid">
+        <tr>
+          <td><b>Tout</b></td>
+          <td>
+            {%- match group.gcal_id %}
+            {%- when Some with (id) %}
+            <a
+              role="button"
+              data-tooltip="Ajouter à Google Calendar"
+              href="https://calendar.google.com/calendar/render?cid={{id}}%40import.calendar.google.com&ctz=Europe%2FParis"
+            >
+              <i class="bx bxl-google"></i>
+            </a>
+            {%- else %}
+            {%- endmatch %}
+            <a role="button" class="outline" data-tooltip="Télécharger le fichier ics" href="{{group.name}}.ics">
+              <i class="bx bxs-download"></i>
+            </a>
+            <button class="outline secondary" data-tooltip="Copier le lien ics" data-copy="%location%{{group.name}}.ics">
+              <i class="bx bxs-copy"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><b>CM</b></td>
+          <td>
+            {%- match group.gcal_id_cm %}
+            {%- when Some with (id) %}
+            <a
+              role="button"
+              data-tooltip="Ajouter à Google Calendar"
+              href="https://calendar.google.com/calendar/render?cid={{id}}%40import.calendar.google.com&ctz=Europe%2FParis"
+            >
+              <i class="bx bxl-google"></i>
+            </a>
+            {%- else %}
+            {%- endmatch %}
+            <a role="button" class="outline" data-tooltip="Télécharger le fichier ics" href="{{group.name}}/cm.ics">
+              <i class="bx bxs-download"></i>
+            </a>
+            <button class="outline secondary" data-tooltip="Copier le lien ics" data-copy="%location%{{group.name}}/cm.ics">
+              <i class="bx bxs-copy"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><b>TD</b></td>
+          <td>
+            {%- match group.gcal_id_td %}
+            {%- when Some with (id) %}
+            <a
+              role="button"
+              data-tooltip="Ajouter à Google Calendar"
+              href="https://calendar.google.com/calendar/render?cid={{id}}%40import.calendar.google.com&ctz=Europe%2FParis"
+            >
+              <i class="bx bxl-google"></i>
+            </a>
+            {%- else %}
+            {%- endmatch %}
+            <a role="button" class="outline" data-tooltip="Télécharger le fichier ics" href="{{group.name}}/td.ics">
+              <i class="bx bxs-download"></i>
+            </a>
+            <button class="outline secondary" data-tooltip="Copier le lien ics" data-copy="%location%{{group.name}}/td.ics">
+              <i class="bx bxs-copy"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Examens</b></td>
+          <td>
+            {%- match group.gcal_id_examen %}
+            {%- when Some with (id) %}
+            <a
+              role="button"
+              data-tooltip="Ajouter à Google Calendar"
+              href="https://calendar.google.com/calendar/render?cid={{id}}%40import.calendar.google.com&ctz=Europe%2FParis"
+            >
+              <i class="bx bxl-google"></i>
+            </a>
+            {%- else %}
+            {%- endmatch %}
+            <a role="button" class="outline" data-tooltip="Télécharger le fichier ics" href="{{group.name}}/examen.ics">
+              <i class="bx bxs-download"></i>
+            </a>
+            <button class="outline secondary" data-tooltip="Copier le lien ics" data-copy="%location%{{group.name}}/examen.ics">
+              <i class="bx bxs-copy"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Autres</b></td>
+          <td>
+            {%- match group.gcal_id_autre %}
+            {%- when Some with (id) %}
+            <a
+              role="button"
+              data-tooltip="Ajouter à Google Calendar"
+              href="https://calendar.google.com/calendar/render?cid={{id}}%40import.calendar.google.com&ctz=Europe%2FParis"
+            >
+              <i class="bx bxl-google"></i>
+            </a>
+            {%- else %}
+            {%- endmatch %}
+            <a role="button" class="outline" data-tooltip="Télécharger le fichier ics" href="{{group.name}}/autre.ics">
+              <i class="bx bxs-download"></i>
+            </a>
+            <button class="outline secondary" data-tooltip="Copier le lien ics" data-copy="%location%{{group.name}}/autre.ics">
+              <i class="bx bxs-copy"></i>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+    {%- endfor %}
+  </main>
+  
+  <footer>
+    <a class="secondary" href="https://github.com/zkayia/cytt">
+      <i class="bx bxl-github"></i>
+    </a>
+    <a class="secondary" href="https://github.com/Obito1903">
+      <img class="avatar" src="https://github.com/Obito1903.png" alt="Avatar: Obito1903"> @Obito1903
+    </a>
+    <a class="secondary" href="https://github.com/nehkowp">
+      <img class="avatar" src="https://github.com/nehkowp.png" alt="Avatar: Paul"> Paul
+    </a>
+    <a class="secondary" href="https://github.com/zkayia">
+      <img class="avatar" src="https://github.com/zkayia.png" alt="Avatar: Zak"> Zak
+    </a>
+  </footer>
+
+</body>
+
+</html>

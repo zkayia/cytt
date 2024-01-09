@@ -1,0 +1,28 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//zkayia//cytt//
+CALSCALE:GREGORIAN
+{%- for event in events %}
+{%- let subject = event.subject.as_deref().unwrap_or("") %}
+BEGIN:VEVENT
+UID:{{ event.celcat.id }}
+CREATED:{{ now }}
+DTSTAMP:{{ now }}
+LAST-MODIFIED:{{ now }}
+{%- if event.celcat.all_day || event.celcat.end.is_none() %}
+DTSTART;VALUE=DATE:{{ crate::utils::date::dt_to_ics_day(event.celcat.start) }}
+{%- else %}
+DTSTART:{{ crate::utils::date::dt_to_ics(event.celcat.start) }}
+DTEND:{{ crate::utils::date::dt_to_ics(event.celcat.end.as_ref().unwrap()) }}
+{%- endif %}
+SUMMARY:{{ event.celcat.event_category }} - {{ subject }}
+{%- if !event.classrooms.is_empty() %}
+LOCATION:{{ event.classrooms|join(", ") }}
+{%- endif %}
+{%- if !event.teachers.is_empty() %}
+ORGANIZER:{{ event.teachers|join(", ") }}
+{%- endif %}
+DESCRIPTION:{{ event.teachers|join(", ") }} | {{ event.celcat.event_category }} - {{ subject }}
+END:VEVENT
+{%- endfor %}
+END:VCALENDAR
