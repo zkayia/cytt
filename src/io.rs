@@ -74,7 +74,6 @@ pub fn generate_png(events: &Vec<Event>, group_name: &str) -> anyhow::Result<()>
   let text_font = load_font()?;
   let text_bold_font = load_bold_font()?;
 
-  static SCHEDULES: &str = "Horaires";
   static SCHEDULES_ROW_HEIGHT: i32 = (1080 - 54) / 19 - 2;
   
   static DAYS: &[&str; 5] = &["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
@@ -88,7 +87,7 @@ pub fn generate_png(events: &Vec<Event>, group_name: &str) -> anyhow::Result<()>
   draw_hollow_rect_mut(&mut image, image_rect, BORDER_COLOR);
   draw_hollow_rect_mut(&mut image, Rect::at(1, 1).of_size(1920 - 2, 1080 - 2), BORDER_COLOR);
 
-  let horaires_size = calc_text_size(&text_font, SCHEDULES, TEXT_SCALE_BIG);
+  let horaires_size = calc_text_size(&text_font, group_name, TEXT_SCALE_BIG);
   draw_text_mut(
     &mut image,
     TEXT_COLOR,
@@ -96,7 +95,7 @@ pub fn generate_png(events: &Vec<Event>, group_name: &str) -> anyhow::Result<()>
     SCHEDULES_ROW_HEIGHT / 2 - horaires_size.1 / 2,
     TEXT_SCALE_BIG,
     &text_font,
-    SCHEDULES,
+    group_name,
   );
   
   for (i, pos) in (98..1920 - 2).step_by(i32_usize(DAY_COLUMN_WIDTH)? + 2).enumerate() {
