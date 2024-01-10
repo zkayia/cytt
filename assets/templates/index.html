@@ -36,7 +36,9 @@
     
     <select>
       {%- for group in crate::CONFIG.groups %}
-      <option value="{{group.name}}" {%- if loop.first %} selected {% endif %}>{{group.name}}</option>
+      <option value="{{group.name}}" {%- if loop.first %} selected {% endif %}>
+        {{group.display_name.as_deref().unwrap_or(group.name)}}
+      </option>
       {%- endfor %}
     </select>
 

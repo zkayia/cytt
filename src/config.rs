@@ -20,6 +20,7 @@ pub static PUBLIC_PATH: Lazy<PathBuf> = Lazy::new(|| Path::new(&CONFIG.data_path
 #[derive(Clone, Debug)]
 pub struct Group {
   pub name: String,
+  pub display_name: Option<String>,
   pub student_id: String,
   pub gcal_id: Option<String>,
   pub gcal_id_cm: Option<String>,
@@ -33,6 +34,7 @@ impl fmt::Display for Group {
     
     writeln!(formatter, "Group(")?;
     writeln!(formatter, "      name: {}", self.name)?;
+    writeln!(formatter, "      display_name: {:?}", self.name)?;
     writeln!(formatter, "      student_id: {}", self.student_id)?;
     writeln!(formatter, "      gcal_id: {:?}", self.gcal_id)?;
     writeln!(formatter, "      gcal_id_cm: {:?}", self.gcal_id_cm)?;
@@ -108,6 +110,7 @@ impl Config {
               continue;
             }
           },
+          display_name: var(format!("CYTT_GROUP_{n}_DISPLAY_NAME")).ok(),
           student_id: match var(format!("CYTT_GROUP_{n}_STUDENTID")) {
             Ok(value) => value,
             Err(_) => {
