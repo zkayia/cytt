@@ -24,11 +24,19 @@ body {
   > header {
     display: flex;
     gap: var(--flex-margin);
+    position: sticky;
+    top: 0;
+    background-color: var(--background-color);
 
     > img {
       margin: auto 0;
       height: var(--logo-size);
       width: var(--logo-size);
+    }
+
+    select {
+      margin: 0 0 0 auto;
+      width: fit-content;
     }
   }
 

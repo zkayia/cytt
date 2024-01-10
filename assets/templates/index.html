@@ -30,9 +30,6 @@
         {%- endif %}
       </ul>
     </nav>
-  </header>
-  
-  <main>
     
     <select>
       {%- for group in crate::CONFIG.groups %}
@@ -41,6 +38,9 @@
       </option>
       {%- endfor %}
     </select>
+  </header>
+  
+  <main>
 
     {%- for group in crate::CONFIG.groups %}
     <div data-group="{{group.name}}">
