@@ -58,7 +58,7 @@ async fn main() {
 
   let serve_dir = ServiceBuilder::new()
     .layer(SetResponseHeaderLayer::overriding(header::CACHE_CONTROL, cache_control))
-    .service(ServeDir::new(PUBLIC_PATH.as_path()));
+    .service(ServeDir::new(PUBLIC_PATH.to_owned()));
 
   let router = Router::new()
     .route("/api/:group/timetable/all", get(api_timetable_all))

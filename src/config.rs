@@ -3,7 +3,7 @@ use std::{
   env::var,
   fmt,
   fs,
-  path::{Path, PathBuf},
+  path::Path,
   process::exit
 };
 
@@ -14,7 +14,7 @@ use crate::{CONFIG, elogln, logln};
 
 pub static DB_SEP: &str = ";";
 pub static CELCAT_HOST: &str = "https://services-web.cyu.fr";
-pub static PUBLIC_PATH: Lazy<PathBuf> = Lazy::new(|| Path::new(&CONFIG.data_path).join("public"));
+pub static PUBLIC_PATH: Lazy<&Path> = Lazy::new(|| Path::new(&CONFIG.public_path));
 
 
 #[derive(Clone, Debug)]
@@ -55,6 +55,7 @@ pub struct Config {
   pub host: String,
   pub port: String,
   pub data_path: String,
+  pub public_path: String,
   pub calendar_fetch_interval: u64,
   pub calendar_fetch_range: u8,
 }
@@ -73,6 +74,7 @@ impl fmt::Display for Config {
     writeln!(formatter, "  host: {},", self.host)?;
     writeln!(formatter, "  port: {},", self.port)?;
     writeln!(formatter, "  data_path: {},", self.data_path)?;
+    writeln!(formatter, "  public_path: {},", self.public_path)?;
     writeln!(formatter, "  calendar_fetch_interval: {},", self.calendar_fetch_interval)?;
     writeln!(formatter, "  calendar_fetch_range: {},", self.calendar_fetch_range)?;
     writeln!(formatter, ")")?;
@@ -148,6 +150,7 @@ impl Config {
       host: var("CYTT_HOST").unwrap_or("127.0.0.1".to_owned()),
       port: var("CYTT_PORT").unwrap_or("8000".to_owned()),
       data_path: var("CYTT_DATA_PATH").unwrap_or("./data".to_owned()),
+      public_path: var("CYTT_PUBLIC_PATH").unwrap_or("./public".to_owned()),
       calendar_fetch_interval: match var("CYTT_CALENDAR_FETCH_INTERVAL") {
         Ok(value) => value.parse::<u64>().unwrap_or(60 * 30),
         Err(_) => 60 * 30

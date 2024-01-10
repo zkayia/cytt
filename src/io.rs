@@ -31,7 +31,7 @@ use crate::{
 
 pub fn setup_public_dir() -> io::Result<()> {
   
-  copy_recursively(Path::new("assets").join("static"), PUBLIC_PATH.as_path())?;
+  copy_recursively(Path::new("assets").join("static"), PUBLIC_PATH.to_owned())?;
 
   for group in &CONFIG.groups {
     fs::create_dir_all(PUBLIC_PATH.join(&group.name))?;
