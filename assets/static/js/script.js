@@ -16,16 +16,19 @@ function handleGroupSelector() {
       e.toggleAttribute("hidden", e.getAttribute("data-group") !== group)
     }
     document.querySelector("header nav li:last-of-type").innerHTML = group;
+    document.querySelector("select").value = group;
     localStorage?.setItem("cytt-selected-group", group);
   }
 
   const select = document.querySelector("select");
-
   select.addEventListener("change", () => switchGroup(select.value), false);
 
-  const selectedGroup = localStorage?.getItem("cytt-selected-group");
+  const groups = [...document.querySelectorAll("select > option")].map((e) => e.value);
   
-  switchGroup(selectedGroup != null ? selectedGroup : select.value);
+  const selectedGroup = localStorage?.getItem("cytt-selected-group");
+  if (selectedGroup != null && groups.includes(selectedGroup)) {
+    switchGroup(selectedGroup);
+  }
 }
 
 function handleClipboardCopy() {
