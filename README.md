@@ -18,11 +18,11 @@ Inspired by [Obito1903/CY-celcat](https://github.com/Obito1903/CY-celcat)
 ### Optional
 | Environment Variable           | Default Value  | Note 
 | :----------------------------- | :------------- | :-
-| `CYTT_GROUP_n_GCALID`          | n in range (0-255) inclusive
-| `CYTT_GROUP_n_GCALID_CM`       | ^
-| `CYTT_GROUP_n_GCALID_TD`       | ^
-| `CYTT_GROUP_n_GCALID_EXAMEN`   | ^
-| `CYTT_GROUP_n_GCALID_AUTRE`    | ^
+| `CYTT_GROUP_n_GCALID`          |                | n in range (0-255) inclusive
+| `CYTT_GROUP_n_GCALID_CM`       |                | ^
+| `CYTT_GROUP_n_GCALID_TD`       |                | ^
+| `CYTT_GROUP_n_GCALID_EXAMEN`   |                | ^
+| `CYTT_GROUP_n_GCALID_AUTRE`    |                | ^
 | `CYTT_HOST`                    | `127.0.0.1`    | 
 | `CYTT_PORT`                    | `8000`         | 
 | `CYTT_DATA_PATH`               | `./data`       | must have rw perms
