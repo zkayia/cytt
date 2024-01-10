@@ -16,7 +16,7 @@ use axum::{
 };
 use calendar::update_calendar_task;
 use config::{Config, PUBLIC_PATH};
-use io::{copy_static_files, generate_html};
+use io::{setup_public_dir, generate_html};
 use once_cell::sync::Lazy;
 use tokio::{net::TcpListener, task};
 use tower::ServiceBuilder;
@@ -38,10 +38,10 @@ async fn main() {
   let _ = CONFIG.calendar_fetch_range;
   
   logln!();
-  logln!("Copying static files...");
-  match copy_static_files() {
-    Ok(_) => logln!("Static filed copied!"),
-    Err(e) => elogln!("Static files copy failed:\n{e}")
+  logln!("Setting up public dir...");
+  match setup_public_dir() {
+    Ok(_) => logln!("Public dir ready!"),
+    Err(e) => elogln!("Public dir setup failed:\n{e}")
   }
 
   logln!();

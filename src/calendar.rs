@@ -1,5 +1,5 @@
 
-use std::{ops::Add, fs};
+use std::ops::Add;
 
 use chrono::{Local, Duration, Datelike};
 use tokio::time;
@@ -57,16 +57,12 @@ async fn update_calendar() -> anyhow::Result<()> {
     logln!("  - Updating database...");
     db_update_calendar(&mut db_con, &group.name, &calendar)?;
     
-    let group_dir_path = PUBLIC_PATH.join(&group.name);
-    
-    logln!("  - Creating group directory...");
-    fs::create_dir_all(&group_dir_path)?;
-
     logln!("  - Generating ics and json files...");
     generate_ics(&calendar, PUBLIC_PATH.join([&group.name, "ics"].join(".")))?;
     generate_json(&calendar, PUBLIC_PATH.join([&group.name, "json"].join(".")))?;
-
+    
     static CATEGORIES: [&str; 3] = ["CM", "TD", "Examen"];
+    let group_dir_path = PUBLIC_PATH.join(&group.name);
     
     for category in CATEGORIES {
 

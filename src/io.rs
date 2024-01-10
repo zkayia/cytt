@@ -16,6 +16,7 @@ use imageproc::{
 use rusttype::Scale;
 
 use crate::{
+  CONFIG,
   celcat::models::Event,
   config::PUBLIC_PATH,
   templates::{IndexHttpTemplate, GroupIcsTemplate},
@@ -28,9 +29,15 @@ use crate::{
 };
 
 
-pub fn copy_static_files() -> io::Result<()> {
+pub fn setup_public_dir() -> io::Result<()> {
   
-  return copy_recursively(Path::new("assets").join("static"), PUBLIC_PATH.as_path());
+  copy_recursively(Path::new("assets").join("static"), PUBLIC_PATH.as_path())?;
+
+  for group in &CONFIG.groups {
+    fs::create_dir_all(PUBLIC_PATH.join(&group.name))?;
+  }
+
+  return Ok(());
 }
 
 pub fn generate_html() -> anyhow::Result<()> {
