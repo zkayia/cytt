@@ -161,8 +161,11 @@ impl Config {
       },
     };
 
-    if let Err(err) = fs::create_dir_all(Path::new(&config.data_path).join("public")) {
-      logln!("Failed to create/access data and public dirs:\n{err}");
+    if let Err(err) = fs::create_dir_all(Path::new(&config.data_path)) {
+      logln!("Failed to create/access the data dir:\n{err}");
+    }
+    if let Err(err) = fs::create_dir_all(Path::new(&config.public_path)) {
+      logln!("Failed to create/access the public dir:\n{err}");
     }
 
     logln!("Config loaded: {config}");
