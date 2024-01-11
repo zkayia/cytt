@@ -43,7 +43,7 @@
   <main>
 
     {%- for group in crate::CONFIG.groups %}
-    <div data-group="{{group.name}}">
+    <div data-group="{{group.name}}"  {%- if !loop.first %} hidden {% endif %}>
       <a href="{{group.name}}.png">
         <img src="{{group.name}}.png" alt="Emploi du temps: {{group.name}}" loading="lazy" width="1920" height="1080">
       </a>
