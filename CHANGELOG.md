@@ -1,4 +1,14 @@
 
+# 1.0.2
+
+### Fixed
+- public directory being created in the data path (although not used)
+- all groups being displayed at once on initial load
+- some elements being visible through the header
+
+### Miscellaneous
+- improve responsiveness on narrow devices (<358px)
+
 # 1.0.1
 
 ### Features

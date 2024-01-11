@@ -1,6 +1,6 @@
 [package]
 name = "cytt"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2021"
 authors = ["zkayia"]
 repository = "https://github.com/zkayia/cytt"
