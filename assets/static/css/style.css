@@ -10,12 +10,8 @@
   --flex-margin: 1rem;
 }
 
-html {
-  overflow-x: visible;
-}
-
 body {
-  overflow-x: visible;
+  overflow-x: hidden;
 
   > :is(header, main, footer) {
     padding: var(--block-padding);
@@ -115,8 +111,18 @@ i.bx {
 }
 
 @media (min-width:768px) {
+
   i.bx {
     font-size: var(--icon-size);
     vertical-align: text-top;
+  }
+}
+
+@media (max-width:357px) {
+  
+  header nav,
+  main table button[data-copy],
+  footer span {
+    display: none;
   }
 }
