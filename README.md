@@ -1,7 +1,7 @@
 
 # cytt
 
-https://new.cytt.duckdns.org
+https://cytt.duckdns.org
 
 Inspired by [Obito1903/CY-celcat](https://github.com/Obito1903/CY-celcat)
 
