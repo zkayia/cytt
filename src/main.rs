@@ -30,7 +30,7 @@ async fn main() {
 
   logln!(
     "cytt {}{}",
-    env!("CARGO_PKG_VERSION"),
+    env!("CYTT_VERSION"),
     if option_env!("CYTT_IS_DOCKER").is_some() {" Docker"} else {""}
   );
   

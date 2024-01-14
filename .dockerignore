@@ -22,4 +22,3 @@ test-data/
 # git stuff
 .git/
 .gitignore
-*.md
