@@ -1,4 +1,12 @@
 
+# 1.0.3
+
+### Fixed
+- png output not displaying next week on weekends
+
+### Miscellaneous
+- moved version handling out of cargo to avoid the docker layer cache being invalidated on new releases
+
 # 1.0.2
 
 ### Fixed
