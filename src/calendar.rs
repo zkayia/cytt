@@ -82,7 +82,7 @@ async fn update_calendar() -> anyhow::Result<()> {
 
     logln!("  - Generating png file");
     generate_png(
-      &db_get_period(&db_con, &group.name, &get_week_bounds(&Local::now()))?,
+      &db_get_period(&db_con, &group.name, &get_week_bounds(&reference))?,
       &group.name
     )?;
   }
