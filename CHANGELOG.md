@@ -1,4 +1,12 @@
 
+# 1.0.4
+
+### Fixed
+- moved events duplicating in db
+
+### Miscellaneous
+- changed fetch parameters to be more consistant
+
 # 1.0.3
 
 ### Fixed
