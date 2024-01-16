@@ -52,7 +52,7 @@ async fn update_calendar() -> anyhow::Result<()> {
   for group in &CONFIG.groups {
 
     logln!("- Fetching {}...", group.name);
-    let calendar = fetch(&client, &group.student_id, &start, &end).await?;
+    let calendar = fetch(&client, &group.student_id, &(start, end)).await?;
 
     logln!("  - Updating database...");
     db_update_calendar(&mut db_con, &group.name, &calendar, &(start, end))?;

@@ -10,15 +10,14 @@ use crate::{
 pub async fn fetch(
   client: &CelcatClient,
   student_id: &str,
-  start: &DateTime<Local>,
-  end: &DateTime<Local>
+  period: &(DateTime<Local>, DateTime<Local>)
 ) -> anyhow::Result<Vec<Event>> {
   
   let response = client.client.post(CELCAT_HOST.to_owned() + "/calendar/Home/GetCalendarData")
     .header("cookie", &client.cookies)
     .form(&[
-      ("start", format!("{}", start.format("%Y-%m-%d"))),
-      ("end", format!("{}", end.format("%Y-%m-%d"))),
+      ("start", format!("{}", period.0.format("%Y-%m-%d"))),
+      ("end", format!("{}", period.1.format("%Y-%m-%d"))),
       ("resType", "104".to_owned()),
       ("calView", "month".to_owned()),
       ("federationIds[]", student_id.to_owned()),
