@@ -36,7 +36,12 @@ pub fn db_init() -> Result<Connection> {
   return Ok(db_con);
 }
 
-pub fn db_update_calendar(db_con: &mut Connection, group_name: &str, calendar: &Vec<Event>) -> Result<()> {
+pub fn db_update_calendar(
+  db_con: &mut Connection,
+  group_name: &str,
+  calendar: &Vec<Event>,
+  period: &(DateTime<Local>, DateTime<Local>)
+) -> Result<()> {
   if calendar.is_empty() {
     return Ok(());
   }
@@ -44,6 +49,15 @@ pub fn db_update_calendar(db_con: &mut Connection, group_name: &str, calendar: &
   let tx = db_con.transaction()?;
 
   {
+    tx.execute(
+      "DELETE FROM events WHERE group_name = ?1 AND start_date BETWEEN ?2 AND ?3",
+      params![
+        group_name,
+        period.0.to_rfc3339_opts(SecondsFormat::Secs, false),
+        period.1.to_rfc3339_opts(SecondsFormat::Secs, false),
+      ],
+    )?;
+
     let mut insert = tx.prepare(
       "INSERT OR REPLACE INTO events (
         group_name,

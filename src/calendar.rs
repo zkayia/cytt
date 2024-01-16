@@ -55,7 +55,7 @@ async fn update_calendar() -> anyhow::Result<()> {
     let calendar = fetch(&client, &group.student_id, &start, &end).await?;
 
     logln!("  - Updating database...");
-    db_update_calendar(&mut db_con, &group.name, &calendar)?;
+    db_update_calendar(&mut db_con, &group.name, &calendar, &(start, end))?;
     
     logln!("  - Generating ics and json files...");
     generate_ics(&calendar, PUBLIC_PATH.join([&group.name, "ics"].join(".")))?;
