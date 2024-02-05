@@ -3,8 +3,7 @@ use std::{
   env::var,
   fmt,
   fs,
-  path::Path,
-  process::exit
+  path::Path
 };
 
 use once_cell::sync::Lazy;
@@ -19,9 +18,11 @@ pub static PUBLIC_PATH: Lazy<&Path> = Lazy::new(|| Path::new(&CONFIG.public_path
 
 #[derive(Clone, Debug)]
 pub struct Group {
+  pub username: String,
+  pub password: String,
   pub name: String,
   pub display_name: Option<String>,
-  pub student_id: String,
+  pub student_id: Option<String>,
   pub gcal_id: Option<String>,
   pub gcal_id_cm: Option<String>,
   pub gcal_id_td: Option<String>,
@@ -33,9 +34,11 @@ impl fmt::Display for Group {
   fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
     
     writeln!(formatter, "Group(")?;
+    writeln!(formatter, "      username: {}", self.username)?;
+    writeln!(formatter, "      password: {}", self.password)?;
     writeln!(formatter, "      name: {}", self.name)?;
     writeln!(formatter, "      display_name: {:?}", self.name)?;
-    writeln!(formatter, "      student_id: {}", self.student_id)?;
+    writeln!(formatter, "      student_id: {:?}", self.student_id)?;
     writeln!(formatter, "      gcal_id: {:?}", self.gcal_id)?;
     writeln!(formatter, "      gcal_id_cm: {:?}", self.gcal_id_cm)?;
     writeln!(formatter, "      gcal_id_td: {:?}", self.gcal_id_td)?;
@@ -49,8 +52,6 @@ impl fmt::Display for Group {
 
 #[derive(Clone, Debug)]
 pub struct Config {
-  pub celcat_username: String,
-  pub celcat_password: String,
   pub groups: Vec<Group>,
   pub host: String,
   pub port: String,
@@ -64,8 +65,6 @@ impl fmt::Display for Config {
   fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
 
     writeln!(formatter, "Config(")?;
-    writeln!(formatter, "  celcat_username: {},", self.celcat_username)?;
-    writeln!(formatter, "  celcat_password: {},", self.celcat_password)?;
     writeln!(formatter, "  groups: [")?;
     for group in &self.groups {
       writeln!(formatter, "    {},", group)?;
@@ -95,6 +94,22 @@ impl Config {
     while var(format!("CYTT_GROUP_{n}_NAME")).is_ok() {
       groups.push(
         Group{
+          username: match var(format!("CYTT_GROUP_{n}_USERNAME")) {
+            Ok(value) => value,
+            Err(_) => {
+              elogln!("Something went wrong while loading `group_{n}_username`, skipping this group.");
+              n += 1;
+              continue;
+            } 
+          },
+          password: match var(format!("CYTT_GROUP_{n}_PASSWORD")) {
+            Ok(value) => value,
+            Err(_) => {
+              elogln!("Something went wrong while loading `group_{n}_password`, skipping this group.");
+              n += 1;
+              continue;
+            } 
+          },
           name: match var(format!("CYTT_GROUP_{n}_NAME")) {
             Ok(value) => match value.chars().all(
               |e| match e {'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_' => true, _ => false}
@@ -113,14 +128,7 @@ impl Config {
             }
           },
           display_name: var(format!("CYTT_GROUP_{n}_DISPLAY_NAME")).ok(),
-          student_id: match var(format!("CYTT_GROUP_{n}_STUDENTID")) {
-            Ok(value) => value,
-            Err(_) => {
-              elogln!("Something went wrong while loading `group_{n}_studentid`, skipping this group.");
-              n += 1;
-              continue;
-            } 
-          },
+          student_id: var(format!("CYTT_GROUP_{n}_STUDENTID")).ok(),
           gcal_id: var(format!("CYTT_GROUP_{n}_GCALID")).ok(),
           gcal_id_cm: var(format!("CYTT_GROUP_{n}_GCALID_CM")).ok(),
           gcal_id_td: var(format!("CYTT_GROUP_{n}_GCALID_TD")).ok(),
@@ -132,20 +140,6 @@ impl Config {
     }
 
     let config = Config{
-      celcat_username: match var("CYTT_CELCAT_USERNAME") {
-        Ok(value) => value,
-        Err(_) => {
-          elogln!("Failed to load config: `celcat_username` is missing or invalid.");
-          exit(1);
-        }
-      },
-      celcat_password: match var("CYTT_CELCAT_PASSWORD") {
-        Ok(value) => value,
-        Err(_) => {
-          elogln!("Failed to load config: `celcat_password` is missing or invalid.");
-          exit(1);
-        }
-      },
       groups,
       host: var("CYTT_HOST").unwrap_or("127.0.0.1".to_owned()),
       port: var("CYTT_PORT").unwrap_or("8000".to_owned()),
