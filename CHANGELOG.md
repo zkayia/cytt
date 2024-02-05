@@ -1,4 +1,12 @@
 
+# 2.0.0
+
+### Fixed
+- made login required on a per group basis 
+
+### Miscellaneous
+- updated website link in readme
+
 # 1.0.4
 
 ### Fixed
