@@ -1,10 +1,8 @@
-
 use std::num::ParseIntError;
 
 use anyhow::anyhow;
 use image::Rgb;
-use rusttype::{Font, point, Scale};
-
+use rusttype::{point, Font, Scale};
 
 pub fn load_font() -> anyhow::Result<Font<'static>> {
   match Font::try_from_bytes(include_bytes!("../../assets/fonts/poppins-semi-bold.ttf")) {
@@ -41,7 +39,7 @@ pub fn fit_text_width(font: &Font, text: &str, scale: Scale, max_width: i32) -> 
 
   let mut width = calc_text_size(font, text, scale).0;
   let mut len = text.len();
-  
+
   while width > max_width {
     len -= 1;
     width = calc_text_size(font, &text[..len], scale).0;
@@ -51,8 +49,7 @@ pub fn fit_text_width(font: &Font, text: &str, scale: Scale, max_width: i32) -> 
 }
 
 pub fn rgb_from_text(color: &str) -> Result<Rgb<u8>, ParseIntError> {
-  
-  let start = if color.starts_with('#') {1} else {0};
+  let start = if color.starts_with('#') { 1 } else { 0 };
   let mut u8_color = [0u8, 0u8, 0u8];
 
   for (i, pos) in (start..7).step_by(2).enumerate() {

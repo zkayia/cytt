@@ -1,5 +1,3 @@
-
-
 #[macro_export]
 macro_rules! log {
   ($fmt:expr) => {{

@@ -1,19 +1,18 @@
-
 use chrono::NaiveDateTime;
 
 use crate::{
+  celcat::models::{CelcatClient, CelcatEvent, Event},
   config::CELCAT_HOST,
-  celcat::models::{CelcatEvent, Event, CelcatClient}
 };
-
 
 pub async fn fetch(
   client: &CelcatClient,
   student_id: &str,
-  period: &(NaiveDateTime, NaiveDateTime)
+  period: &(NaiveDateTime, NaiveDateTime),
 ) -> anyhow::Result<Vec<Event>> {
-  
-  let response = client.client.post(CELCAT_HOST.to_owned() + "/calendar/Home/GetCalendarData")
+  let response = client
+    .client
+    .post(CELCAT_HOST.to_owned() + "/calendar/Home/GetCalendarData")
     .header("cookie", &client.cookies)
     .form(&[
       ("start", format!("{}", period.0.format("%Y-%m-%d"))),
@@ -32,10 +31,11 @@ pub async fn fetch(
   }
 
   return Ok(
-    response.json::<Vec<CelcatEvent>>()
+    response
+      .json::<Vec<CelcatEvent>>()
       .await?
       .iter()
       .map(Event::from_celcat_event)
-      .collect()
+      .collect(),
   );
 }

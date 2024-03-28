@@ -1,8 +1,6 @@
-
-use std::ops::{Sub, Add};
+use std::ops::{Add, Sub};
 
 use chrono::{Datelike, Duration, NaiveDateTime, Timelike};
-
 
 pub fn dt_from_rfc3339(date: &str) -> anyhow::Result<NaiveDateTime> {
   Ok(NaiveDateTime::parse_from_str(date, "%Y-%m-%dT%H:%M:%S")?)
@@ -41,18 +39,18 @@ pub fn get_week_bounds(date: &NaiveDateTime) -> (NaiveDateTime, NaiveDateTime) {
 pub fn get_start_of_day(date: &NaiveDateTime) -> NaiveDateTime {
   date.sub(
     Duration::hours(i64::from(date.hour()))
-    + Duration::minutes(i64::from(date.minute()))
-    + Duration::seconds(i64::from(date.second()))
-    + Duration::nanoseconds(i64::from(date.nanosecond())),
+      + Duration::minutes(i64::from(date.minute()))
+      + Duration::seconds(i64::from(date.second()))
+      + Duration::nanoseconds(i64::from(date.nanosecond())),
   )
 }
 
 pub fn get_end_of_day(date: &NaiveDateTime) -> NaiveDateTime {
   date.add(
     Duration::hours(23)
-    + Duration::minutes(59)
-    + Duration::seconds(59)
-    + Duration::nanoseconds(999999999),
+      + Duration::minutes(59)
+      + Duration::seconds(59)
+      + Duration::nanoseconds(999999999),
   )
 }
 

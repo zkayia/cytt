@@ -1,5 +1,3 @@
-
-
 pub fn join_strings(string: String, other: &str, sep: &str) -> String {
   if other.is_empty() {
     return string;

@@ -1,8 +1,6 @@
-
 use reqwest::header::HeaderMap;
 
 use crate::utils::string::join_strings;
-
 
 pub fn extract_cookies(headers: &HeaderMap) -> String {
   let mut cookies: String = "".to_owned();

@@ -1,8 +1,6 @@
-
 use askama::Template;
 
 use crate::celcat::models::Event;
-
 
 #[derive(Template)]
 #[template(path = "index.html")]

@@ -1,18 +1,11 @@
-
 use std::path::Path;
 
 use chrono::NaiveDateTime;
-use rusqlite::{Connection, Result, params};
+use rusqlite::{params, Connection, Result};
 
-use crate::{
-  CONFIG,
-  config::DB_SEP,
-  celcat::models::Event,
-};
-
+use crate::{celcat::models::Event, config::DB_SEP, CONFIG};
 
 pub fn db_init() -> Result<Connection> {
-  
   let db_con = Connection::open(Path::new(&CONFIG.data_path).join("cytt.db"))?;
 
   db_con.execute(
@@ -32,7 +25,7 @@ pub fn db_init() -> Result<Connection> {
     )",
     (),
   )?;
-  
+
   Ok(db_con)
 }
 
@@ -40,12 +33,12 @@ pub fn db_update_calendar(
   db_con: &mut Connection,
   group_name: &str,
   calendar: &Vec<Event>,
-  period: &(NaiveDateTime, NaiveDateTime)
+  period: &(NaiveDateTime, NaiveDateTime),
 ) -> Result<()> {
   if calendar.is_empty() {
     return Ok(());
   }
-  
+
   let tx = db_con.transaction()?;
 
   {
@@ -72,7 +65,7 @@ pub fn db_update_calendar(
         teachers,
         classrooms,
         subject
-      ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)"
+      ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)",
     )?;
 
     for event in calendar {
@@ -95,14 +88,13 @@ pub fn db_update_calendar(
       ])?;
     }
   }
-  
+
   tx.commit()?;
 
   Ok(())
 }
 
 pub fn db_get_all(db_con: &Connection, group_name: &str) -> anyhow::Result<Vec<Event>> {
-
   let mut select = db_con.prepare("SELECT * FROM events WHERE group_name = ?1")?;
 
   let results = select.query_and_then([group_name], Event::from_sql_row)?;
@@ -113,10 +105,10 @@ pub fn db_get_all(db_con: &Connection, group_name: &str) -> anyhow::Result<Vec<E
 pub fn db_get_period(
   db_con: &Connection,
   group_name: &str,
-  period: &(NaiveDateTime, NaiveDateTime)
+  period: &(NaiveDateTime, NaiveDateTime),
 ) -> anyhow::Result<Vec<Event>> {
-
-  let mut select = db_con.prepare("SELECT * FROM events WHERE group_name = ?1 AND start_date BETWEEN ?2 AND ?3")?;
+  let mut select = db_con
+    .prepare("SELECT * FROM events WHERE group_name = ?1 AND start_date BETWEEN ?2 AND ?3")?;
 
   let results = select.query_and_then(
     (
