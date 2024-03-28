@@ -1,5 +1,5 @@
 
-use chrono::{DateTime, Local};
+use chrono::NaiveDateTime;
 
 use crate::{
   config::CELCAT_HOST,
@@ -10,7 +10,7 @@ use crate::{
 pub async fn fetch(
   client: &CelcatClient,
   student_id: &str,
-  period: &(DateTime<Local>, DateTime<Local>)
+  period: &(NaiveDateTime, NaiveDateTime)
 ) -> anyhow::Result<Vec<Event>> {
   
   let response = client.client.post(CELCAT_HOST.to_owned() + "/calendar/Home/GetCalendarData")

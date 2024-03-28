@@ -1,5 +1,5 @@
 
-use chrono::{DateTime, Local};
+use chrono::NaiveDateTime;
 use html_escape::decode_html_entities;
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -7,7 +7,7 @@ use reqwest::Client;
 use rusqlite::Row;
 use serde::{de::Error, Deserialize, Serialize, Deserializer};
 
-use crate::{config::DB_SEP, utils::date::{dt_from_rfc3339, rfc3339_add_tz}};
+use crate::{config::DB_SEP, utils::date::dt_from_rfc3339};
 
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -15,9 +15,9 @@ use crate::{config::DB_SEP, utils::date::{dt_from_rfc3339, rfc3339_add_tz}};
 pub struct CelcatEvent {
 	pub id: String,
   #[serde(deserialize_with = "from_rfc3339")]
-	pub start: DateTime<Local>,
+	pub start: NaiveDateTime,
   #[serde(deserialize_with = "maybe_from_rfc3339")]
-	pub end: Option<DateTime<Local>>,
+	pub end: Option<NaiveDateTime>,
 	pub all_day: bool,
 	pub description: String,
 	pub background_color: String,
@@ -39,25 +39,23 @@ pub struct CelcatClient {
   pub cookies: String,
 }
 
-fn maybe_from_rfc3339<'de, D>(deserializer: D) -> Result<Option<DateTime<Local>>, D::Error>
+fn maybe_from_rfc3339<'de, D>(deserializer: D) -> Result<Option<NaiveDateTime>, D::Error>
 where
   D: Deserializer<'de>,
 {
   return match Option::<&str>::deserialize(deserializer)? {
-    Some(date) => dt_from_rfc3339(&rfc3339_add_tz(date)) 
+    Some(date) => dt_from_rfc3339(date) 
       .map(Some)
       .map_err(D::Error::custom),
     None => Ok(None)
   };
 }
 
-fn from_rfc3339<'de, D>(deserializer: D) -> Result<DateTime<Local>, D::Error>
+fn from_rfc3339<'de, D>(deserializer: D) -> Result<NaiveDateTime, D::Error>
 where
   D: Deserializer<'de>,
 {
-  return dt_from_rfc3339(
-    &rfc3339_add_tz(Deserialize::deserialize(deserializer)?)
-  ).map_err(D::Error::custom);
+  return dt_from_rfc3339(Deserialize::deserialize(deserializer)?).map_err(D::Error::custom);
 }
 
 impl Event {

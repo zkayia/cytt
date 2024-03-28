@@ -2,7 +2,7 @@
 use std::ops::Add;
 
 use anyhow::bail;
-use chrono::{DateTime, Datelike, Duration, Local};
+use chrono::{Datelike, Duration, Local, NaiveDateTime};
 use rusqlite::Connection;
 use tokio::time;
 
@@ -40,7 +40,7 @@ async fn update_calendar() -> anyhow::Result<()> {
   
   let mut db_con = db_init()?;
 
-  let now = Local::now();
+  let now = Local::now().naive_local();
   let weekday = now.weekday().num_days_from_monday();
   let reference = if weekday > 4 {now.add(Duration::days(i64::from(7 - weekday)))} else {now};
   
@@ -62,8 +62,8 @@ async fn update_calendar() -> anyhow::Result<()> {
 async fn update_group(
   group: &Group,
   db_con: &mut Connection,
-  reference: &DateTime<Local>,
-  period: &(DateTime<Local>, DateTime<Local>),
+  reference: &NaiveDateTime,
+  period: &(NaiveDateTime, NaiveDateTime),
 ) -> anyhow::Result<()> {
 
   

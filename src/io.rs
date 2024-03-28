@@ -51,7 +51,7 @@ pub fn generate_ics(events: &Vec<Event>, path: PathBuf) -> anyhow::Result<()> {
   
   fs::write(
     path,
-    GroupIcsTemplate{now: &dt_to_ics(&Local::now()), events}.render()?
+    GroupIcsTemplate{now: &dt_to_ics(&Local::now().naive_utc()), events}.render()?
   )?;
 
   return Ok(());

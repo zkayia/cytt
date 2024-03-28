@@ -1,31 +1,23 @@
 
 use std::ops::{Sub, Add};
 
-use chrono::{Datelike, DateTime, Duration, Local, Timelike, Utc};
+use chrono::{Datelike, Duration, NaiveDateTime, Timelike};
 
 
-pub fn rfc3339_add_tz(date: &str) -> String {
-  return if date.chars().count() < 20 {
-    format!("{}{}", date, Local::now().format("%:z"))
-  } else {
-    date.to_owned()
-  };
+pub fn dt_from_rfc3339(date: &str) -> anyhow::Result<NaiveDateTime> {
+  return Ok(NaiveDateTime::parse_from_str(date, "%Y-%m-%dT%H:%M:%S")?);
 }
 
-pub fn dt_from_rfc3339(date: &str) -> anyhow::Result<DateTime<Local>> {
-  return Ok(DateTime::parse_from_rfc3339(date)?.with_timezone(&Local));
-}
-
-pub fn dt_to_ics(date: &DateTime<Local>) -> String {
+pub fn dt_to_ics(date: &NaiveDateTime) -> String {
   // return format!("{}", date.format("%Y%m%dT%H%M%S%z"));
-  return format!("{}Z", date.with_timezone(&Utc).format("%Y%m%dT%H%M%S"));
+  return format!("{}Z", date.and_utc().format("%Y%m%dT%H%M%S"));
 }
 
-pub fn dt_to_ics_day(date: &DateTime<Local>) -> String {
-  return format!("{}Z", date.with_timezone(&Utc).format("%Y%m%dT"));
+pub fn dt_to_ics_day(date: &NaiveDateTime) -> String {
+  return format!("{}Z", date.and_utc().format("%Y%m%dT"));
 }
 
-pub fn get_week_bounds(date: &DateTime<Local>) -> (DateTime<Local>, DateTime<Local>) {
+pub fn get_week_bounds(date: &NaiveDateTime) -> (NaiveDateTime, NaiveDateTime) {
   let midnight = get_start_of_day(date);
   let weekday = i64::from(midnight.weekday().num_days_from_monday());
   return (
@@ -46,7 +38,7 @@ pub fn get_week_bounds(date: &DateTime<Local>) -> (DateTime<Local>, DateTime<Loc
 //   );
 // }
 
-pub fn get_start_of_day(date: &DateTime<Local>) -> DateTime<Local> {
+pub fn get_start_of_day(date: &NaiveDateTime) -> NaiveDateTime {
   return date.sub(
     Duration::hours(i64::from(date.hour()))
     + Duration::minutes(i64::from(date.minute()))
@@ -55,7 +47,7 @@ pub fn get_start_of_day(date: &DateTime<Local>) -> DateTime<Local> {
   );
 }
 
-pub fn get_end_of_day(date: &DateTime<Local>) -> DateTime<Local> {
+pub fn get_end_of_day(date: &NaiveDateTime) -> NaiveDateTime {
   return date.add(
     Duration::hours(23)
     + Duration::minutes(59)

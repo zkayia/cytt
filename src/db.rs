@@ -1,7 +1,7 @@
 
 use std::path::Path;
 
-use chrono::{DateTime, Local, SecondsFormat};
+use chrono::NaiveDateTime;
 use rusqlite::{Connection, Result, params};
 
 use crate::{
@@ -40,7 +40,7 @@ pub fn db_update_calendar(
   db_con: &mut Connection,
   group_name: &str,
   calendar: &Vec<Event>,
-  period: &(DateTime<Local>, DateTime<Local>)
+  period: &(NaiveDateTime, NaiveDateTime)
 ) -> Result<()> {
   if calendar.is_empty() {
     return Ok(());
@@ -53,8 +53,8 @@ pub fn db_update_calendar(
       "DELETE FROM events WHERE group_name = ?1 AND start_date BETWEEN ?2 AND ?3",
       params![
         group_name,
-        period.0.to_rfc3339_opts(SecondsFormat::Secs, false),
-        period.1.to_rfc3339_opts(SecondsFormat::Secs, false),
+        period.0.format("%Y-%m-%dT%H:%M:%S").to_string(),
+        period.1.format("%Y-%m-%dT%H:%M:%S").to_string(),
       ],
     )?;
 
@@ -79,9 +79,9 @@ pub fn db_update_calendar(
       insert.execute(params![
         group_name,
         event.celcat.id,
-        event.celcat.start.to_rfc3339_opts(SecondsFormat::Secs, false),
+        event.celcat.start.format("%Y-%m-%dT%H:%M:%S").to_string(),
         match event.celcat.end {
-          Some(value) => value.to_rfc3339_opts(SecondsFormat::Secs, false),
+          Some(value) => value.format("%Y-%m-%dT%H:%M:%S").to_string(),
           None => "NULL".to_owned(),
         },
         event.celcat.all_day,
@@ -113,7 +113,7 @@ pub fn db_get_all(db_con: &Connection, group_name: &str) -> anyhow::Result<Vec<E
 pub fn db_get_period(
   db_con: &Connection,
   group_name: &str,
-  period: &(DateTime<Local>, DateTime<Local>)
+  period: &(NaiveDateTime, NaiveDateTime)
 ) -> anyhow::Result<Vec<Event>> {
 
   let mut select = db_con.prepare("SELECT * FROM events WHERE group_name = ?1 AND start_date BETWEEN ?2 AND ?3")?;
@@ -121,8 +121,8 @@ pub fn db_get_period(
   let results = select.query_and_then(
     (
       group_name,
-      period.0.to_rfc3339_opts(SecondsFormat::Secs, false),
-      period.1.to_rfc3339_opts(SecondsFormat::Secs, false),
+      period.0.format("%Y-%m-%dT%H:%M:%S").to_string(),
+      period.1.format("%Y-%m-%dT%H:%M:%S").to_string(),
     ),
     Event::from_sql_row,
   )?;

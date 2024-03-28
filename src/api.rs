@@ -27,7 +27,7 @@ pub async fn api_timetable_week(Path(group): Path<String>) -> Result<Json<Vec<Ev
   
   let db_con = db_init().map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
   
-  let week = get_week_bounds(&Local::now());
+  let week = get_week_bounds(&Local::now().naive_local());
 
   let Ok(current_week) = db_get_period(&db_con, &group, &week) else {
     let _ = db_con.close();
