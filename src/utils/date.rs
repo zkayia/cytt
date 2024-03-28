@@ -5,25 +5,25 @@ use chrono::{Datelike, Duration, NaiveDateTime, Timelike};
 
 
 pub fn dt_from_rfc3339(date: &str) -> anyhow::Result<NaiveDateTime> {
-  return Ok(NaiveDateTime::parse_from_str(date, "%Y-%m-%dT%H:%M:%S")?);
+  Ok(NaiveDateTime::parse_from_str(date, "%Y-%m-%dT%H:%M:%S")?)
 }
 
 pub fn dt_to_ics(date: &NaiveDateTime) -> String {
   // return format!("{}", date.format("%Y%m%dT%H%M%S%z"));
-  return format!("{}Z", date.and_utc().format("%Y%m%dT%H%M%S"));
+  format!("{}Z", date.and_utc().format("%Y%m%dT%H%M%S"))
 }
 
 pub fn dt_to_ics_day(date: &NaiveDateTime) -> String {
-  return format!("{}Z", date.and_utc().format("%Y%m%dT"));
+  format!("{}Z", date.and_utc().format("%Y%m%dT"))
 }
 
 pub fn get_week_bounds(date: &NaiveDateTime) -> (NaiveDateTime, NaiveDateTime) {
   let midnight = get_start_of_day(date);
   let weekday = i64::from(midnight.weekday().num_days_from_monday());
-  return (
+  (
     midnight.sub(Duration::days(weekday)),
     get_end_of_day(&midnight.add(Duration::days(6 - weekday))),
-  );
+  )
 }
 
 // pub fn get_month_bounds(date: &DateTime<Local>) -> (DateTime<Local>, DateTime<Local>) {
@@ -39,21 +39,21 @@ pub fn get_week_bounds(date: &NaiveDateTime) -> (NaiveDateTime, NaiveDateTime) {
 // }
 
 pub fn get_start_of_day(date: &NaiveDateTime) -> NaiveDateTime {
-  return date.sub(
+  date.sub(
     Duration::hours(i64::from(date.hour()))
     + Duration::minutes(i64::from(date.minute()))
     + Duration::seconds(i64::from(date.second()))
     + Duration::nanoseconds(i64::from(date.nanosecond())),
-  );
+  )
 }
 
 pub fn get_end_of_day(date: &NaiveDateTime) -> NaiveDateTime {
-  return date.add(
+  date.add(
     Duration::hours(23)
     + Duration::minutes(59)
     + Duration::seconds(59)
     + Duration::nanoseconds(999999999),
-  );
+  )
 }
 
 // pub fn is_leap_year(year: i32) -> bool {

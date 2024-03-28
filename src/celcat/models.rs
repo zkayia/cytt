@@ -43,19 +43,19 @@ fn maybe_from_rfc3339<'de, D>(deserializer: D) -> Result<Option<NaiveDateTime>, 
 where
   D: Deserializer<'de>,
 {
-  return match Option::<&str>::deserialize(deserializer)? {
+  match Option::<&str>::deserialize(deserializer)? {
     Some(date) => dt_from_rfc3339(date) 
       .map(Some)
       .map_err(D::Error::custom),
     None => Ok(None)
-  };
+  }
 }
 
 fn from_rfc3339<'de, D>(deserializer: D) -> Result<NaiveDateTime, D::Error>
 where
   D: Deserializer<'de>,
 {
-  return dt_from_rfc3339(Deserialize::deserialize(deserializer)?).map_err(D::Error::custom);
+  dt_from_rfc3339(Deserialize::deserialize(deserializer)?).map_err(D::Error::custom)
 }
 
 impl Event {

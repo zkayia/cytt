@@ -49,14 +49,14 @@ async fn update_calendar() -> anyhow::Result<()> {
   logln!("- Fetching from {start} to {end}");
   
   for group in &CONFIG.groups {
-    if let Err(err) = update_group(&group, &mut db_con, &reference, &(start, end)).await {
+    if let Err(err) = update_group(group, &mut db_con, &reference, &(start, end)).await {
       elogln!("Calendar update failed for group {}:\n{err}", group.name)
     }
   }
 
   let _ = db_con.close();
 
-  return Ok(());
+  Ok(())
 }
 
 async fn update_group(
@@ -70,7 +70,7 @@ async fn update_group(
   logln!("- {}: Logging in to celcat...", group.name);
   let (client, student_id_extract) = login(&group.username, &group.password).await?;
 
-  let Some(student_id) = group.student_id.as_ref().or_else(|| {student_id_extract.as_ref()}) else {
+  let Some(student_id) = group.student_id.as_ref().or(student_id_extract.as_ref()) else {
     bail!("Failed to find a student id");
   };
 
@@ -118,5 +118,5 @@ async fn update_group(
     &group.name
   )?;
 
-  return Ok(());
+  Ok(())
 }

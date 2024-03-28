@@ -46,7 +46,7 @@ impl fmt::Display for Group {
     writeln!(formatter, "      gcal_id_autre: {:?}", self.gcal_id_autre)?;
     write!(formatter, "    )")?;
     
-    return Ok(());
+    Ok(())
   }
 }
 
@@ -78,7 +78,7 @@ impl fmt::Display for Config {
     writeln!(formatter, "  calendar_fetch_range: {},", self.calendar_fetch_range)?;
     writeln!(formatter, ")")?;
     
-    return Ok(());
+    Ok(())
   }
 }
 
@@ -111,9 +111,7 @@ impl Config {
             } 
           },
           name: match var(format!("CYTT_GROUP_{n}_NAME")) {
-            Ok(value) => match value.chars().all(
-              |e| match e {'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_' => true, _ => false}
-            ) {
+            Ok(value) => match value.chars().all(|e| matches!(e, 'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_')) {
               true => value,
               false => {
                 elogln!("`group_{n}_name` does not match `[A-Za-z0-9-_]`, skipping this group.");
@@ -164,6 +162,6 @@ impl Config {
 
     logln!("Config loaded: {config}");
     
-    return config;
+    config
   }
 }

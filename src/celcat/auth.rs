@@ -43,7 +43,7 @@ pub async fn login(username: &str, password: &str) -> anyhow::Result<(CelcatClie
       client,
       cookies: join_strings(extract_cookies(response.headers()), &token_cookies, "; ")
     },
-    match response.headers().get("location").map(|v| v.to_str().ok()).flatten() {
+    match response.headers().get("location").and_then(|v| v.to_str().ok()) {
       Some(location) => STUDENT_ID_REG.captures(location)
         .and_then(|capture| capture.get(1))
         .map(|student_id| student_id.as_str().to_owned()),
@@ -76,5 +76,5 @@ async fn fetch_token(client: &Client) -> anyhow::Result<(String, String)> {
     anyhow::bail!("Token not found");
   };
 
-  return Ok((token, cookies));
+  Ok((token, cookies))
 }

@@ -17,5 +17,5 @@ pub fn extract_cookies(headers: &HeaderMap) -> String {
       cookies = join_strings(cookies, &value[..end], "; ");
     }
   }
-  return cookies;
+  cookies
 }

@@ -37,14 +37,14 @@ pub fn setup_public_dir() -> io::Result<()> {
     fs::create_dir_all(PUBLIC_PATH.join(&group.name))?;
   }
 
-  return Ok(());
+  Ok(())
 }
 
 pub fn generate_html() -> anyhow::Result<()> {
   
   fs::write(PUBLIC_PATH.join("index.html"), IndexHttpTemplate.render()?)?;
   
-  return Ok(());
+  Ok(())
 }
 
 pub fn generate_ics(events: &Vec<Event>, path: PathBuf) -> anyhow::Result<()> {
@@ -54,7 +54,7 @@ pub fn generate_ics(events: &Vec<Event>, path: PathBuf) -> anyhow::Result<()> {
     GroupIcsTemplate{now: &dt_to_ics(&Local::now().naive_utc()), events}.render()?
   )?;
 
-  return Ok(());
+  Ok(())
 }
 
 pub fn generate_json(events: &Vec<Event>, path: PathBuf) -> io::Result<()> {
@@ -67,7 +67,7 @@ pub fn generate_json(events: &Vec<Event>, path: PathBuf) -> io::Result<()> {
   
   writer.flush()?;
   
-  return Ok(());
+  Ok(())
 }
 
 pub fn generate_png(events: &Vec<Event>, group_name: &str) -> anyhow::Result<()> {
@@ -201,5 +201,5 @@ pub fn generate_png(events: &Vec<Event>, group_name: &str) -> anyhow::Result<()>
 
   image.save(PUBLIC_PATH.join([group_name, "png"].join(".")))?;
 
-  return Ok(());
+  Ok(())
 }

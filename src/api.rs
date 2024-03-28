@@ -20,7 +20,7 @@ pub async fn api_timetable_all(Path(group): Path<String>) -> Result<Json<Vec<Eve
 
   let _ = db_con.close();
 
-  return Ok(Json(timetable));
+  Ok(Json(timetable))
 }
 
 pub async fn api_timetable_week(Path(group): Path<String>) -> Result<Json<Vec<Event>>, StatusCode> {
@@ -36,5 +36,5 @@ pub async fn api_timetable_week(Path(group): Path<String>) -> Result<Json<Vec<Ev
 
   let _ = db_con.close();
 
-  return Ok(Json(current_week));
+  Ok(Json(current_week))
 }

@@ -33,7 +33,7 @@ pub fn db_init() -> Result<Connection> {
     (),
   )?;
   
-  return Ok(db_con);
+  Ok(db_con)
 }
 
 pub fn db_update_calendar(
@@ -98,7 +98,7 @@ pub fn db_update_calendar(
   
   tx.commit()?;
 
-  return Ok(());
+  Ok(())
 }
 
 pub fn db_get_all(db_con: &Connection, group_name: &str) -> anyhow::Result<Vec<Event>> {
@@ -107,7 +107,7 @@ pub fn db_get_all(db_con: &Connection, group_name: &str) -> anyhow::Result<Vec<E
 
   let results = select.query_and_then([group_name], Event::from_sql_row)?;
 
-  return Ok(results.filter_map(|e| e.ok()).collect());
+  Ok(results.filter_map(|e| e.ok()).collect())
 }
 
 pub fn db_get_period(
@@ -127,5 +127,5 @@ pub fn db_get_period(
     Event::from_sql_row,
   )?;
 
-  return Ok(results.filter_map(|e| e.ok()).collect());
+  Ok(results.filter_map(|e| e.ok()).collect())
 }

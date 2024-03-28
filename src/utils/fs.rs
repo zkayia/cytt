@@ -18,5 +18,5 @@ pub fn copy_recursively(source: impl AsRef<Path>, destination: impl AsRef<Path>)
       fs::copy(entry.path(), destination.as_ref().join(entry.file_name()))?;
     }
   }
-  return Ok(());
+  Ok(())
 }

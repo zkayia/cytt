@@ -7,17 +7,17 @@ use rusttype::{Font, point, Scale};
 
 
 pub fn load_font() -> anyhow::Result<Font<'static>> {
-  return match Font::try_from_bytes(include_bytes!("../../assets/fonts/poppins-semi-bold.ttf")) {
+  match Font::try_from_bytes(include_bytes!("../../assets/fonts/poppins-semi-bold.ttf")) {
     Some(font) => Ok(font),
     None => Err(anyhow!("Failed to generate png: Font not found")),
-  };
+  }
 }
 
 pub fn load_bold_font() -> anyhow::Result<Font<'static>> {
-  return match Font::try_from_bytes(include_bytes!("../../assets/fonts/poppins-bold.ttf")) {
+  match Font::try_from_bytes(include_bytes!("../../assets/fonts/poppins-bold.ttf")) {
     Some(font) => Ok(font),
     None => Err(anyhow!("Failed to generate png: Font not found")),
-  };
+  }
 }
 
 // https://stackoverflow.com/questions/68151488/rusttype-get-text-width-for-font
@@ -31,7 +31,7 @@ pub fn calc_text_size(font: &Font, text: &str, scale: Scale) -> (i32, i32) {
   let v_metrics = font.v_metrics(scale);
   let height = v_metrics.ascent - v_metrics.descent + v_metrics.line_gap;
 
-  return (width.round() as i32, height.round() as i32);
+  (width.round() as i32, height.round() as i32)
 }
 
 pub fn fit_text_width(font: &Font, text: &str, scale: Scale, max_width: i32) -> usize {
@@ -43,11 +43,11 @@ pub fn fit_text_width(font: &Font, text: &str, scale: Scale, max_width: i32) -> 
   let mut len = text.len();
   
   while width > max_width {
-    len = len - 1;
+    len -= 1;
     width = calc_text_size(font, &text[..len], scale).0;
   }
 
-  return len;
+  len
 }
 
 pub fn rgb_from_text(color: &str) -> Result<Rgb<u8>, ParseIntError> {
@@ -59,5 +59,5 @@ pub fn rgb_from_text(color: &str) -> Result<Rgb<u8>, ParseIntError> {
     u8_color[i] = u8::from_str_radix(&color[pos..pos + 2], 16)?;
   }
 
-  return Ok(Rgb(u8_color));
+  Ok(Rgb(u8_color))
 }
