@@ -1,4 +1,15 @@
 
+# 2.0.1
+
+### Fixed
+- no subject found when classroom is missing
+- switched to NaiveDateTime to avoid timezone shenanigans
+
+### Miscellaneous
+- updated config in readme
+- satisfied the almighty clippy
+- applied cargo fmt
+
 # 2.0.0
 
 ### Fixed
