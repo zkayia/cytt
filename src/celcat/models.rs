@@ -108,7 +108,7 @@ impl Event {
       if ((i == 1 && parts_length < 4) || i == 3) && subject.is_none() && celcat_event.event_category == "Indisponibilité" {
         subject = Some(part.to_owned());
       }
-      if i == 2 && subject.is_none() && parts_length > 4 {
+      if i == 2 && subject.is_none() && parts_length >= 4 {
         subject = match TDCM_REG.find(part) {
           Some(tdcm) => Some(part[..tdcm.start()].to_owned()),
           None => Some(part.to_owned()),
