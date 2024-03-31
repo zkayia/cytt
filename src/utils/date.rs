@@ -1,6 +1,6 @@
 use std::ops::{Add, Sub};
 
-use chrono::{Datelike, Duration, NaiveDateTime, Timelike};
+use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveDateTime, Timelike, Utc};
 
 pub fn dt_from_rfc3339(date: &str) -> anyhow::Result<NaiveDateTime> {
   Ok(NaiveDateTime::parse_from_str(date, "%Y-%m-%dT%H:%M:%S")?)
@@ -8,11 +8,33 @@ pub fn dt_from_rfc3339(date: &str) -> anyhow::Result<NaiveDateTime> {
 
 pub fn dt_to_ics(date: &NaiveDateTime) -> String {
   // return format!("{}", date.format("%Y%m%dT%H%M%S%z"));
-  format!("{}Z", date.and_utc().format("%Y%m%dT%H%M%S"))
+  format!("{}Z", get_utc(date).format("%Y%m%dT%H%M%S"))
 }
 
 pub fn dt_to_ics_day(date: &NaiveDateTime) -> String {
-  format!("{}Z", date.and_utc().format("%Y%m%dT"))
+  format!("{}Z", get_utc(date).format("%Y%m%dT"))
+}
+
+pub fn get_utc(date: &NaiveDateTime) -> DateTime<Utc> {
+  let summer_start = last_sunday_of_month(date.year(), 3)
+    .and_hms_opt(2, 0, 0)
+    .unwrap();
+  // Will give the wrong time during the hour just before the end but whatever
+  let summer_end = last_sunday_of_month(date.year(), 10)
+    .and_hms_opt(2, 0, 0)
+    .unwrap();
+  let is_summer_time = summer_start <= *date && date < &summer_end;
+  date
+    .sub(Duration::hours(if is_summer_time { 2 } else { 1 }))
+    .and_utc()
+}
+
+pub fn last_sunday_of_month(year: i32, month: u32) -> NaiveDate {
+  let last_day_of_month =
+    NaiveDate::from_ymd_opt(year, month, days_per_month(year, month)).unwrap();
+  last_day_of_month.sub(Duration::days(i64::from(
+    last_day_of_month.weekday().num_days_from_sunday(),
+  )))
 }
 
 pub fn get_week_bounds(date: &NaiveDateTime) -> (NaiveDateTime, NaiveDateTime) {
@@ -54,14 +76,14 @@ pub fn get_end_of_day(date: &NaiveDateTime) -> NaiveDateTime {
   )
 }
 
-// pub fn is_leap_year(year: i32) -> bool {
-//   return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
-// }
+pub fn is_leap_year(year: i32) -> bool {
+  (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
+}
 
-// pub fn days_per_month(month: u32, is_leap_year: bool) -> u32 {
-//   return if month == 2 {
-//     28 + (if is_leap_year {1} else {0})
-//   } else {
-//     31 - (month - 1) % 7 % 2
-//   };
-// }
+pub fn days_per_month(year: i32, month: u32) -> u32 {
+  if month == 2 {
+    28 + (if is_leap_year(year) { 1 } else { 0 })
+  } else {
+    31 - (month - 1) % 7 % 2
+  }
+}
