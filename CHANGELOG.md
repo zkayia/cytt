@@ -1,4 +1,9 @@
 
+# 2.0.2
+
+### Fixed
+- fixed summer time offset in ics files
+
 # 2.0.1
 
 ### Fixed
